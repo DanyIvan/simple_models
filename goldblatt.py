@@ -3,7 +3,7 @@ import pandas as pd
 from scipy.optimize import fsolve
 from scipy.integrate import ode
 import matplotlib.pyplot as plt
-from scipy.integrate import RK45
+#from scipy.integrate import RK45
 from utils.conversions import mol_to_O2_PAL
 # from numba import njit, generated_jit
 # from numba.typed import List
