@@ -499,7 +499,7 @@ class DynamicSteadyStates:
             model = DynamicModel(pp=pp, r=self.r, dt=self.dt, beta=self.beta,
                 total_time=self.total_time, save_every=self.save_every)
             model.run_stiff()
-            data_model = pd.DataFrame({'O': model.O, 'M': model.M,
+            data_model = pd.DataFrame({'O': model.O, 'M': model.M, 'C': model.C,
                  'time': model.time, 'pp': pp})
             data.append(data_model)
         self.data = pd.concat(data)
