@@ -452,7 +452,7 @@ class DynamicModel(Base):
             set_initial_value(y0, 0)
         while solver.successful() and  solver.t < self.total_time:
             sol = solver.integrate(solver.t + self.dt)
-            if int(solver.t) % self.save_every == 0:
+            if round(solver.t, 1) % self.save_every == 0:
                 #print(solver.t)
                 self.M.append(np.real(solver.y[0]))
                 self.O.append(np.real(solver.y[1]))
@@ -481,11 +481,12 @@ class DynamicModel(Base):
         plt.show()
     
 class DynamicSteadyStates:
-    def __init__(self, r, beta, dt, total_time,):
+    def __init__(self, r, beta, dt, total_time, save_every=100):
         self.r = r 
         self.beta = beta
         self.dt = dt
         self.total_time = total_time
+        self.save_every = save_every
         self.pp_list = None
         self.data = None
 
@@ -496,7 +497,7 @@ class DynamicSteadyStates:
         for pp in pp_list:
             print(format(pp, 'E'))
             model = DynamicModel(pp=pp, r=self.r, dt=self.dt, beta=self.beta,
-                total_time=self.total_time)
+                total_time=self.total_time, save_every=self.save_every)
             model.run_stiff()
             data_model = pd.DataFrame({'O': model.O, 'M': model.M,
                  'time': model.time, 'pp': pp})
