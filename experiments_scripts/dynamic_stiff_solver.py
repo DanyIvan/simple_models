@@ -11,16 +11,15 @@ folder = '../experiments_data/'
 
 
 betas = [1e-2, 1e-3, 1e-4]
-rs = [3e10, 1e11, 1e12]
+pp_lists = [np.logspace(13, 16, 50),np.logspace(16, 13, 50)]
 
-for r in rs:
+for pp_list in pp_lists:
     for beta in betas:
-        print('r='+ format(r, 'E'))
         print('beta=' + format(beta, 'E'))
-        states = DynamicSteadyStates(r=r, beta=beta, dt=1, total_time=1e6,
-            save_every=1000)
-        states.find_steady_states(pp_list=np.logspace(13, 16, 50))
+        states = DynamicSteadyStates(r=3e10, beta=beta, dt=1, total_time=3e5,
+            save_every=100)
+        states.find_steady_states(pp_list=pp_list)
         date = datetime.today().strftime('%Y%m%d_%H%M%S')
         NAME = 'dynamic_stiff_solver_' + date + '.obj'
-        save_object(states, folder + NAME + '.obj')
+        save_object(states, folder + NAME)
 
