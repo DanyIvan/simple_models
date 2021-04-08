@@ -508,11 +508,10 @@ class DynamicSteadyStates:
         for pp in pp_list:
             print(format(pp, 'E'))
             model = DynamicModel(pp=pp, r=self.r, dt=self.dt, beta=self.beta,
-                total_time=self.total_time, save_every=self.save_every)
-            if new_O0 and new_M0:
-                print('new initial conds')
-                model.O0 = new_O0
-                model.M0 = new_M0
+                total_time=self.total_time, save_every=self.save_every, 
+                O0=new_O0, M0=new_M0)
+            print('0O: ' +str(model.O0))
+            print('M0: ' + str(model.M0))
             model.run_stiff()
             new_O0 = model.O[-1]
             new_M0 = model.M[-1]
