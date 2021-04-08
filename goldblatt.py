@@ -54,10 +54,16 @@ class SteadyStateModel(Base):
                 }
         }
         self.reductant_input_list = None 
-        self.primary_prod_list = None 
+        self.primary_prod_list = None
+
+    def atmosphere_flux(self, primary_prod): 
+        flux = [] 
+        for pp in primary_prod: 
+            flux.append(pp * (self.omega(pp) + self.beta*(1 - self.omega(pp)))) 
+        return flux 
             
     
-    def find_steady_states(self, N_points=1000, equation=1):
+    def find_steady_states(self, N_points=1000, equation=1, atmosphere_flux=False):
         # alternative oxygen equation
         oxygen_eq = lambda M, C: lambda pp, r: lambda O:  self.omega(O) * pp -\
                  (1 - self.omega(O)) * r +\
@@ -70,6 +76,9 @@ class SteadyStateModel(Base):
         # ----------------------------------------------------------
         x0 = 1e11
         primary_prod_upwards  = np.logspace(11, 18, 1000)
+        if atmosphere_flux:
+            primary_prod_upwards = self.atmosphere_flux(primary_prod_upwards)
+            print(primary_prod_upwards[-1])
         # get point of bistability
         # x0_list = []
         # for idx, primary_prod in enumerate(primary_prod_upwards):
@@ -112,6 +121,8 @@ class SteadyStateModel(Base):
         # ----------------------------------------------------------
         x0 = 1e19
         primary_prod_backwards = np.logspace(18, 11, 1000)
+        if atmosphere_flux:
+            primary_prod_backwards = self.atmosphere_flux(primary_prod_backwards)
         # get point of bistability
         # x0_list = []
         # for idx, primary_prod in enumerate(primary_prod_backwards):
@@ -492,19 +503,23 @@ class DynamicSteadyStates:
 
     def find_steady_states(self, pp_list=np.logspace(11, 17, 100)):
         self.pp_list = pp_list
-
         data = []
+        new_O0, new_M0 = None, None
         for pp in pp_list:
             print(format(pp, 'E'))
             model = DynamicModel(pp=pp, r=self.r, dt=self.dt, beta=self.beta,
                 total_time=self.total_time, save_every=self.save_every)
+            if new_O0 and new_M0:
+                print('new initial conds')
+                model.O0 = new_O0
+                model.M0 = new_M0
             model.run_stiff()
+            new_O0 = model.O[-1]
+            new_M0 = model.M[-1]
             data_model = pd.DataFrame({'O': model.O, 'M': model.M, 'C': model.C,
                  'time': model.time, 'pp': pp})
             data.append(data_model)
         self.data = pd.concat(data)
-        
-    
             
 
 
